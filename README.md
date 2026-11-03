@@ -19,7 +19,7 @@ The original firmware dump, tools, and markings from one specific Intel Xeon Phi
 | Board label | `G30238-002` |
 | PCB fab | AT&S `G61449-002` |
 | SMC | **NXP LPC2305** (ARM7) microcontroller, I²C `0x28` |
-| GDDR5 | Elpida `W2032BBBG` |
+| GDDR5 | 8 GB total: 32 x Elpida `W2032BBBG`, 2 Gbit (256 MB) each, both sides of the board |
 | SPI flash | 2 MB; the dump is [in this repo](#the-firmware-dump) |
 | Flyer | Knights Corner Safety Flyer `G56132-001`, marked *engineering use only, not for resale* |
 
@@ -36,7 +36,7 @@ SMC read over the I²C master: write `0x282` to `0x8007c5100`, the descriptor to
 
 ## What came with it
 
-It came complete: the original Intel factory box with custom foam, the card in its anti-static bag, the mounting bracket and screws, and the Intel "Knights Corner Safety Flyer" (`G56132-001`). Its third page states plainly it's an *engineering development product, not for resale or lease, engineering use only*. The labels date assembly to 2012-03-01 and packing to 2012-06-28.
+It came complete: the original Intel factory box with custom foam, the card in its anti-static bag, the mounting bracket and screws, and the Intel "Knights Corner Safety Flyer" (`G56132-001`). Its third page states plainly it's an *engineering development product, not for resale or lease, engineering use only*. The labels date assembly to 2012-03-01; the 2012-06-28 date on the box is when the card was returned to Intel, matching the flyer's disposition note.
 
 <p align="center">
 <img src="images/box-label.jpg" width="300" alt="Box label">
@@ -48,13 +48,17 @@ It came complete: the original Intel factory box with custom foam, the card in i
 
 ## The firmware dump
 
-The main reason this repo exists: the card's original firmware, [`firmware/knc-qcl0-es-original-dump.bin`](firmware/knc-qcl0-es-original-dump.bin). It's the complete 2 MB SPI image read off this card (with flashrom) before anything was modified, so it's exactly what it shipped with, serial and all. As far as I can tell it's the first Knights Corner *engineering-sample* firmware made public; the production 7120A image has been dumped before, but not an ES.
+The main reason this repo exists: the card's original firmware, [`firmware/knc-qcl0-es-original-dump.bin`](firmware/knc-qcl0-es-original-dump.bin). It's the complete 2 MB SPI image read off this card (with flashrom) before anything was modified, so it's exactly what it shipped with, serial and all. As far as I can tell it's the first Knights Corner *engineering-sample* firmware made public; the production 7120A image has been dumped before, but not an ES. The version is **2.1.02.0314** (built May 2012), an older build than the public production images (0390 / 0391), which fits an early-2012 sample.
 
 ```
-file     knc-qcl0-es-original-dump.bin
-size     2,097,152 bytes (2 MB)
-md5      661e0ffd00e4c2e2acc5e32d049a18ac
-sha256   8cc7d6a3d6da508d3e8a9c18a4c0ca97db9fd4cafb55e6082646a5b6b3bacfc1
+file            knc-qcl0-es-original-dump.bin
+flash version   2.1.02.0314   (KNCFLASHIMAGE_VERSION, stamped in every module header)
+fboot0 version  2.1.02.0314
+build           05/02/2012 17:40:02   (2 May 2012)
+copyright       Intel Corporation, 2012
+size            2,097,152 bytes (2 MB)
+md5             661e0ffd00e4c2e2acc5e32d049a18ac
+sha256          8cc7d6a3d6da508d3e8a9c18a4c0ca97db9fd4cafb55e6082646a5b6b3bacfc1
 ```
 
 **Layout.** The flash maps to the top of the card's address space. The second-stage bootstrap sits at file offset `0x70000` (runs at `0xfffe0000`); a maintenance module is higher up; the board config (GCT), including the serial, is near the end. One thing that matters a lot downstream: the clock and fuse configuration the firmware programs **is not stored in this flash**. It's read live from an on-die strap region at boot, which is why the GPU can't be un-gated by editing this image.
@@ -100,7 +104,6 @@ The texture samplers are on this die but their clock domain is dead and I couldn
 That the board is layout-identical to the graphics-enabled debug boards (same routing, same power, they only *added* connectors) is what tells me the gate is on the die, not the board.
 
 ## Gallery
-
 
 <p align="center">
 <a href="images/card-in-server.jpg"><img src="images/card-in-server.jpg" height="150"></a>
