@@ -101,7 +101,6 @@ That the board is layout-identical to the graphics-enabled debug boards (same ro
 
 ## Gallery
 
-Click any shot for the full-resolution image.
 
 <p align="center">
 <a href="images/card-in-server.jpg"><img src="images/card-in-server.jpg" height="150"></a>
